@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Boss Battle - Overlay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            aspect-ratio: 9 / 16;
+        }
+
+        /* Contenedor principal con relación 9:16 */
+        .container {
+            width: 100%;
+            height: 100%;
+            max-width: 100vw;
+            max-height: 100vh;
+            aspect-ratio: 9 / 16;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Capa de video de fondo (z-index: 1) */
+        #video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* Capa de interfaz (z-index: 2) */
+        .ui-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 15px;
+            pointer-events: none;
+        }
+
+        /* Encabezado con nivel */
+        .header {
+            text-align: center;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            pointer-events: auto;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+            color: #ff4444;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .level-indicator {
+            font-size: 18px;
+            color: #ffff00;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Contenedor de barra de vida */
+        .hp-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff4444;
+            border-radius: 8px;
+            padding: 12px;
+            width: 100%;
+            max-width: 95%;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+        }
+
+        .hp-label {
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hp-bar-container {
+            width: 100%;
+            height: 35px;
+            background: #333;
+            border: 2px solid #666;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff6600, #ff0000);
+            width: 100%;
+            transition: width 0.1s ease-out;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .hp-text {
+            color: #fff;
+            font-size: 14px;
+            margin-top: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Historial de actividad */
+        .activity-log {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #666;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 120px;
+            overflow-y: auto;
+            color: #fff;
+            font-size: 12px;
+            width: 100%;
+            max-width: 95%;
+            margin: 10px auto 0;
+            pointer-events: auto;
+        }
+
+        .activity-item {
+            padding: 6px 0;
+            border-bottom: 1px solid #444;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item .username {
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        .activity-item .action {
+            color: #ff6666;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Confeti pequeño (likes) */
+        .confetti-small {
+            position: fixed;
+            pointer-events: none;
+            z-index: 3;
+            font-size: 20px;
+            animation: confettiFall 2s ease-out forwards;
+        }
+
+        /* Confeti grande (rosas) */
+        .confetti-large {
+            position: fixed;
+            pointer-events: none;
+            z-index: 3;
+            font-size: 40px;
+            animation: confettiFallLarge 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) translateX(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) translateX(100px) rotate(360deg);
+            }
+        }
+
+        @keyframes confettiFallLarge {
+            0% {
+                opacity: 1;
+                transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) translateX(150px) rotate(720deg) scale(0.5);
+            }
+        }
+
+        /* Mensaje de siguiente nivel */
+        .level-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 4px solid #ffff00;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            color: #ffff00;
+            font-size: 42px;
+            font-weight: bold;
+            z-index: 4;
+            display: none;
+            box-shadow: 0 0 40px rgba(255, 255, 0, 0.6);
+            animation: levelMessageAppear 0.5s ease-out;
+        }
+
+        @keyframes levelMessageAppear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .level-message.show {
+            display: block;
+        }
+
+        /* Scrollbar personalizada */
+        .activity-log::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .activity-log::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .activity-log::-webkit-scrollbar-thumb {
+            background: #666;
+            border-radius: 4px;
+        }
+
+        .activity-log::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
+
+        /* Responsive para diferentes tamaños */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .level-indicator {
+                font-size: 14px;
+            }
+            
+            .hp-label {
+                font-size: 12px;
+            }
+            
+            .hp-bar-container {
+                height: 30px;
+            }
+            
+            .hp-bar-fill {
+                font-size: 12px;
+            }
+            
+            .hp-text {
+                font-size: 12px;
+            }
+            
+            .activity-log {
+                font-size: 11px;
+                max-height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Video de fondo en bucle -->
+        <video id="video-background" autoplay loop muted playsinline>
+            <source src="jefe1.mp4" type="video/mp4">
+            Tu navegador no soporta videos HTML5
+        </video>
+
+        <!-- Interfaz de usuario -->
+        <div class="ui-container">
+            <!-- Encabezado -->
+            <div class="header">
+                <h1>⚔️ BOSS BATTLE ⚔️</h1>
+                <div class="level-indicator">Nivel: <span id="level-number">1</span></div>
+            </div>
+
+            <!-- Barra de vida -->
+            <div class="hp-container">
+                <div class="hp-label">Vida del Jefe</div>
+                <div class="hp-bar-container">
+                    <div class="hp-bar-fill" id="hp-bar">
+                        <span id="hp-text-bar"></span>
+                    </div>
+                </div>
+                <div class="hp-text">
+                    <span id="hp-display">10000 / 10000</span>
+                </div>
+            </div>
+
+            <!-- Historial de actividad -->
+            <div class="activity-log" id="activity-log">
+                <div class="activity-item">Esperando conexión...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje de siguiente nivel -->
+    <div class="level-message" id="level-message">
+        ¡Enhorabuena!<br>Pasas al Siguiente Nivel
+    </div>
+
+    <!-- Script de Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Script principal -->
+    <script>
+        // Configuración
+        const socket = io();
+        let gameState = {
+            currentLevel: 1,
+            vidaActual: 10000,
+            vidaMaxima: 10000
+        };
+
+        // Emojis para confeti
+        const confettiEmojis = ['🎉', '✨', '⭐', '🌟', '💫', '🎊'];
+        const roseEmojis = ['🌹', '💐', '🎁'];
+
+        // Crear sonidos
+        function createLikeSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const now = audioContext.currentTime;
+            
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+            
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            
+            osc.start(now);
+            osc.stop(now + 0.1);
+        }
+
+        function createRoseSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const now = audioContext.currentTime;
+            
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            osc.frequency.setValueAtTime(400, now);
+            osc.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+            
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            
+            osc.start(now);
+            osc.stop(now + 0.3);
+        }
+
+        // Función para crear confeti
+        function createConfetti(isRose = false) {
+            const confettiCount = isRose ? 15 : 5;
+            const emojis = isRose ? roseEmojis : confettiEmojis;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = isRose ? 'confetti-large' : 'confetti-small';
+                confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                const startX = Math.random() * window.innerWidth;
+                const startY = -50;
+                
+                confetti.style.left = startX + 'px';
+                confetti.style.top = startY + 'px';
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, isRose ? 3000 : 2000);
+            }
+        }
+
+        // Evento de inicialización
+        socket.on('init', (data) => {
+            console.log('Estado inicial recibido:', data);
+            gameState = data;
+            updateHPBar();
+            updateLevelDisplay();
+            addActivityLog('✓ Conectado al servidor');
+        });
+
+        // Evento de actualización de HP (daño pasivo)
+        socket.on('hp_update', (data) => {
+            gameState = {
+                currentLevel: data.currentLevel,
+                vidaActual: data.vidaActual,
+                vidaMaxima: data.vidaMaxima
+            };
+            updateHPBar();
+        });
+
+        // Evento de golpe por like
+        socket.on('like_hit', (data) => {
+            console.log('Like recibido:', data);
+            gameState = {
+                currentLevel: data.currentLevel || gameState.currentLevel,
+                vidaActual: data.vidaActual,
+                vidaMaxima: data.vidaMaxima
+            };
+            
+            updateHPBar();
+            createLikeSound();
+            createConfetti(false);
+            addActivityLog(`<span class="username">@${data.usuario}</span> <span class="action">envió un ❤️</span>`);
+        });
+
+        // Evento de golpe por rosa
+        socket.on('rose_hit', (data) => {
+            console.log('Rosa recibida:', data);
+            gameState = {
+                currentLevel: data.currentLevel || gameState.currentLevel,
+                vidaActual: data.vidaActual,
+                vidaMaxima: data.vidaMaxima
+            };
+            
+            updateHPBar();
+            createRoseSound();
+            createConfetti(true);
+            addActivityLog(`<span class="username">@${data.usuario}</span> <span class="action">envió ${data.cantidad}x 🌹 (-${data.damageAmount} HP)</span>`);
+        });
+
+        // Evento de derrota del jefe
+        socket.on('boss_defeated', (data) => {
+            console.log('¡Jefe derrotado!', data);
+            showLevelMessage();
+            addActivityLog(`<span class="action">¡¡¡ JEFE NIVEL ${data.level} DERROTADO !!!</span>`);
+        });
+
+        // Evento de inicio de nuevo nivel
+        socket.on('level_start', (data) => {
+            console.log('Nuevo nivel iniciado:', data);
+            gameState.currentLevel = data.level;
+            gameState.vidaMaxima = data.maxHp;
+            gameState.vidaActual = data.maxHp;
+            
+            updateHPBar();
+            updateLevelDisplay();
+            
+            // Cambiar video del jefe
+            const videoElement = document.getElementById('video-background');
+            videoElement.src = data.video;
+            videoElement.play();
+            
+            hideLevelMessage();
+            addActivityLog(`<span class="action">¡Nivel ${data.level} iniciado! HP: ${data.maxHp}</span>`);
+        });
+
+        // Evento de juego completado
+        socket.on('game_completed', (data) => {
+            console.log('¡Juego completado!', data);
+            addActivityLog(`<span class="action">¡¡¡ ${data.message} !!!</span>`);
+        });
+
+        // Evento de reset del juego
+        socket.on('game_reset', (data) => {
+            console.log('Juego reseteado');
+            gameState = data;
+            updateHPBar();
+            updateLevelDisplay();
+            hideLevelMessage();
+            addActivityLog('🔄 Juego reseteado - Nueva batalla comienza');
+        });
+
+        // Función para actualizar la barra de vida
+        function updateHPBar() {
+            const percentage = (gameState.vidaActual / gameState.vidaMaxima) * 100;
+            const hpBar = document.getElementById('hp-bar');
+            const hpDisplay = document.getElementById('hp-display');
+            const hpTextBar = document.getElementById('hp-text-bar');
+            
+            hpBar.style.width = percentage + '%';
+            hpDisplay.textContent = `${gameState.vidaActual.toLocaleString()} / ${gameState.vidaMaxima.toLocaleString()}`;
+            hpTextBar.textContent = Math.round(percentage) + '%';
+        }
+
+        // Función para actualizar el indicador de nivel
+        function updateLevelDisplay() {
+            document.getElementById('level-number').textContent = gameState.currentLevel;
+        }
+
+        // Función para agregar al historial de actividad
+        function addActivityLog(message) {
+            const activityLog = document.getElementById('activity-log');
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.innerHTML = message;
+            activityLog.appendChild(item);
+            
+            // Scroll automático hacia abajo
+            activityLog.scrollTop = activityLog.scrollHeight;
+            
+            // Limitar el número de items a 8
+            const items = activityLog.querySelectorAll('.activity-item');
+            if (items.length > 8) {
+                items[0].remove();
+            }
+        }
+
+        // Función para mostrar mensaje de siguiente nivel
+        function showLevelMessage() {
+            const levelMessage = document.getElementById('level-message');
+            levelMessage.classList.add('show');
+        }
+
+        // Función para ocultar mensaje de siguiente nivel
+        function hideLevelMessage() {
+            const levelMessage = document.getElementById('level-message');
+            levelMessage.classList.remove('show');
+        }
+
+        // Manejar desconexión
+        socket.on('disconnect', () => {
+            addActivityLog('✗ Desconectado del servidor');
+        });
+
+        // Manejar reconexión
+        socket.on('connect', () => {
+            addActivityLog('✓ Reconectado al servidor');
+        });
+
+        // Permitir resetear el juego con tecla R
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'r') {
+                socket.emit('reset_game');
+            }
+        });
+    </script>
+</body>
+</html>
