@@ -153,17 +153,26 @@ function startPassiveDamage() {
 
 // Función para conectar a TikTok Live
 function connectToTikTok() {
+  // Validar que el nombre de usuario esté configurado
+  if (!TIKTOK_USERNAME || TIKTOK_USERNAME === 'your_tiktok_username') {
+    console.error('❌ ERROR: TIKTOK_USERNAME no está configurado correctamente.');
+    console.error('Por favor, configura la variable de entorno TIKTOK_USERNAME en Render.com');
+    console.error('O edita el archivo .env con tu usuario de TikTok (sin @)');
+    return;
+  }
+
   if (isConnected) {
     console.log('Ya estamos conectados a TikTok Live');
     return;
   }
 
-  tiktokLive = new WebcastPushConnection({
-    username: TIKTOK_USERNAME,
-    processInitialData: false,
-    fetchRoomInfoOnConnect: true,
-    enableExtendedGiftInfo: true
-  });
+  try {
+    // WebcastPushConnection espera el username como primer parámetro
+    tiktokLive = new WebcastPushConnection(TIKTOK_USERNAME);
+  } catch (err) {
+    console.error('Error al crear la conexión:', err.message);
+    return;
+  }
 
   // Evento de conexión exitosa
   tiktokLive.on('WebcastPushFrame', () => {
