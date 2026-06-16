@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const { TikTokLive } = require('tiktok-live-connector');
+const { WebcastPushConnection } = require('tiktok-live-connector');
 const path = require('path');
 
 const app = express();
@@ -158,7 +158,7 @@ function connectToTikTok() {
     return;
   }
 
-  tiktokLive = new TikTokLive({
+  tiktokLive = new WebcastPushConnection({
     username: TIKTOK_USERNAME,
     processInitialData: false,
     fetchRoomInfoOnConnect: true,
@@ -166,6 +166,16 @@ function connectToTikTok() {
   });
 
   // Evento de conexión exitosa
+  tiktokLive.on('WebcastPushFrame', () => {
+    if (!isConnected) {
+      isConnected = true;
+      console.log(`✓ Conectado a TikTok Live de @${TIKTOK_USERNAME}`);
+      io.emit('init', gameState);
+      startPassiveDamage();
+    }
+  });
+
+  // Evento de conexión exitosa (alternativo)
   tiktokLive.on('connected', () => {
     console.log(`✓ Conectado a TikTok Live de @${TIKTOK_USERNAME}`);
     isConnected = true;
