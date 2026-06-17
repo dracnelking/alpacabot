@@ -41,7 +41,6 @@
             height: 100%;
             object-fit: cover;
             z-index: 1;
-            volume: 1.0;
         }
 
         /* Capa de interfaz (z-index: 2) */
@@ -54,7 +53,7 @@
             z-index: 2;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             padding: 15px;
             pointer-events: none;
         }
@@ -82,18 +81,58 @@
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
         }
 
-        /* Contenedor inferior derecho con elementos verticales */
-        .bottom-right-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-left: auto;
-            margin-top: auto;
-            margin-right: 8px;
+        /* Contenedor de barra de vida */
+        .hp-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff4444;
+            border-radius: 8px;
+            padding: 12px;
+            width: 100%;
+            max-width: 95%;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+        }
+
+        .hp-label {
+            color: #fff;
+            font-size: 14px;
             margin-bottom: 8px;
-            pointer-events: auto;
-            align-items: flex-end;
-            flex-shrink: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hp-bar-container {
+            width: 100%;
+            height: 35px;
+            background: #333;
+            border: 2px solid #666;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff6600, #ff0000);
+            width: 100%;
+            transition: width 0.1s ease-out;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .hp-text {
+            color: #fff;
+            font-size: 14px;
+            margin-top: 8px;
+            text-align: center;
+            font-weight: bold;
         }
 
         /* Historial de actividad */
@@ -101,21 +140,21 @@
             background: rgba(0, 0, 0, 0.7);
             border: 2px solid #666;
             border-radius: 8px;
-            padding: 6px;
-            max-height: 110px;
+            padding: 12px;
+            max-height: 120px;
             overflow-y: auto;
             color: #fff;
-            font-size: 9px;
-            width: 130px;
-            flex-shrink: 0;
+            font-size: 12px;
+            width: 100%;
+            max-width: 95%;
+            margin: 10px auto 0;
             pointer-events: auto;
         }
 
         .activity-item {
-            padding: 3px 0;
+            padding: 6px 0;
             border-bottom: 1px solid #444;
             animation: slideIn 0.3s ease-out;
-            line-height: 1.2;
         }
 
         .activity-item:last-child {
@@ -140,60 +179,6 @@
                 opacity: 1;
                 transform: translateX(0);
             }
-        }
-
-        /* Contenedor de barra de vida */
-        .hp-container {
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid #ff4444;
-            border-radius: 8px;
-            padding: 8px;
-            width: 180px;
-            flex-shrink: 0;
-            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
-            pointer-events: auto;
-        }
-
-        .hp-label {
-            color: #fff;
-            font-size: 9px;
-            margin-bottom: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .hp-bar-container {
-            width: 100%;
-            height: 22px;
-            background: #333;
-            border: 2px solid #666;
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .hp-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00ff00, #ffff00, #ff6600, #ff0000);
-            width: 100%;
-            transition: width 0.1s ease-out;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 6px;
-            color: #fff;
-            font-weight: bold;
-            font-size: 8px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-        }
-
-        .hp-text {
-            color: #fff;
-            font-size: 8px;
-            margin-top: 3px;
-            text-align: center;
-            font-weight: bold;
         }
 
         /* Confeti pequeño (likes) */
@@ -273,7 +258,7 @@
 
         /* Scrollbar personalizada */
         .activity-log::-webkit-scrollbar {
-            width: 4px;
+            width: 6px;
         }
 
         .activity-log::-webkit-scrollbar-track {
@@ -301,23 +286,23 @@
             }
             
             .hp-label {
-                font-size: 8px;
+                font-size: 12px;
             }
             
             .hp-bar-container {
-                height: 20px;
+                height: 30px;
             }
             
             .hp-bar-fill {
-                font-size: 7px;
+                font-size: 12px;
             }
             
             .hp-text {
-                font-size: 7px;
+                font-size: 12px;
             }
             
             .activity-log {
-                font-size: 8px;
+                font-size: 11px;
                 max-height: 100px;
             }
         }
@@ -326,7 +311,7 @@
 <body>
     <div class="container">
         <!-- Video de fondo en bucle -->
-        <video id="video-background" autoplay loop playsinline>
+        <video id="video-background" autoplay loop muted playsinline>
             <source src="jefe1.mp4" type="video/mp4">
             Tu navegador no soporta videos HTML5
         </video>
@@ -339,25 +324,22 @@
                 <div class="level-indicator">Nivel: <span id="level-number">1</span></div>
             </div>
 
-            <!-- Contenedor inferior derecho con barra de vida y actividad -->
-            <div class="bottom-right-container">
-                <!-- Barra de vida (arriba) -->
-                <div class="hp-container">
-                    <div class="hp-label">Vida del Jefe</div>
-                    <div class="hp-bar-container">
-                        <div class="hp-bar-fill" id="hp-bar">
-                            <span id="hp-text-bar"></span>
-                        </div>
-                    </div>
-                    <div class="hp-text">
-                        <span id="hp-display">10000 / 10000</span>
+            <!-- Barra de vida -->
+            <div class="hp-container">
+                <div class="hp-label">Vida del Jefe</div>
+                <div class="hp-bar-container">
+                    <div class="hp-bar-fill" id="hp-bar">
+                        <span id="hp-text-bar"></span>
                     </div>
                 </div>
+                <div class="hp-text">
+                    <span id="hp-display">10000 / 10000</span>
+                </div>
+            </div>
 
-                <!-- Historial de actividad (abajo) -->
-                <div class="activity-log" id="activity-log">
-                    <div class="activity-item">Esperando conexión...</div>
-                </div>
+            <!-- Historial de actividad -->
+            <div class="activity-log" id="activity-log">
+                <div class="activity-item">Esperando conexión...</div>
             </div>
         </div>
     </div>
@@ -366,11 +348,6 @@
     <div class="level-message" id="level-message">
         ¡Enhorabuena!<br>Pasas al Siguiente Nivel
     </div>
-
-    <!-- Elemento de audio para música de fondo -->
-    <audio id="background-music" autoplay loop>
-        <source src="song.mp3" type="audio/mpeg">
-    </audio>
 
     <!-- Script de Socket.io -->
     <script src="/socket.io/socket.io.js"></script>
@@ -388,18 +365,6 @@
         // Emojis para confeti
         const confettiEmojis = ['🎉', '✨', '⭐', '🌟', '💫', '🎊'];
         const roseEmojis = ['🌹', '💐', '🎁'];
-
-        // Configurar volumen del video y música de fondo
-        window.addEventListener('load', () => {
-            const videoElement = document.getElementById('video-background');
-            const backgroundMusic = document.getElementById('background-music');
-            
-            // Volumen del video al máximo
-            videoElement.volume = 1.0;
-            
-            // Volumen de la música de fondo más bajo (0.3 = 30%)
-            backgroundMusic.volume = 0.3;
-        });
 
         // Crear sonidos
         function createLikeSound() {
