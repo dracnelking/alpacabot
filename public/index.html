@@ -291,10 +291,15 @@
 <body>
     <div class="container">
         <!-- Video de fondo en bucle -->
-        <video id="video-background" autoplay loop muted playsinline>
+        <video id="video-background" autoplay loop playsinline>
             <source src="jefe1.mp4" type="video/mp4">
             Tu navegador no soporta videos HTML5
         </video>
+
+        <audio id="bg-music" loop>
+            <source src="sonido.mp3" type="audio/mpeg">
+            Tu navegador no soporta audio HTML5
+        </audio>
 
         <!-- Interfaz de usuario -->
         <div class="ui-container">
@@ -565,6 +570,25 @@
                 socket.emit('reset_game');
             }
         });
+
+        // 🔊 NUEVO: Activación de audio y video por interacción (Colócalo aquí al final) 🔊
+        document.body.addEventListener('click', () => {
+            const video = document.getElementById('video-background');
+            const audio = document.getElementById('bg-music');
+            
+            // 1. Forzar a que el video deje de estar muteado en el navegador
+            video.muted = false;
+            
+            // 2. Arrancar la música de fondo en bucle
+            audio.play()
+                .then(() => {
+                    console.log("🎵 Música de fondo activada correctamente");
+                })
+                .catch(error => {
+                    console.log("La reproducción automática de audio falló:", error);
+                });
+                
+        }, { once: true }); // '{ once: true }' hace que el clic solo se escuche la primera vez
     </script>
 </body>
 </html>
