@@ -291,7 +291,7 @@
 <body>
     <div class="container">
         <!-- Video de fondo en bucle -->
-        <video id="video-background" autoplay loop playsinline>
+        <video id="video-background" autoplay loop muted playsinline>
             <source src="jefe1.mp4" type="video/mp4">
             Tu navegador no soporta videos HTML5
         </video>
@@ -576,16 +576,17 @@
             const video = document.getElementById('video-background');
             const audio = document.getElementById('bg-music');
             
-            // 1. Forzar a que el video deje de estar muteado en el navegador
+            // 1. Quitamos el silencio al video y forzamos su reproducción por si acaso
             video.muted = false;
+            video.play().catch(error => console.log("El video no pudo reanudarse:", error));
             
-            // 2. Arrancar la música de fondo en bucle
+            // 2. Forzamos la reproducción del archivo MP3 en bucle
             audio.play()
                 .then(() => {
-                    console.log("🎵 Música de fondo activada correctamente");
+                    console.log("🔊 ¡Todo el audio ha sido activado con éxito!");
                 })
                 .catch(error => {
-                    console.log("La reproducción automática de audio falló:", error);
+                    console.log("La música MP3 falló al arrancar:", error);
                 });
                 
         }, { once: true }); // '{ once: true }' hace que el clic solo se escuche la primera vez
