@@ -53,7 +53,7 @@
             z-index: 2;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: space-between;
             padding: 15px;
             pointer-events: none;
         }
@@ -79,6 +79,66 @@
             font-size: 18px;
             color: #ffff00;
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Contenedor inferior derecho con elementos verticales */
+        .bottom-right-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: auto;
+            margin-top: auto;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            pointer-events: auto;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+
+        /* Historial de actividad */
+        .activity-log {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #666;
+            border-radius: 8px;
+            padding: 6px;
+            max-height: 110px;
+            overflow-y: auto;
+            color: #fff;
+            font-size: 9px;
+            width: 130px;
+            flex-shrink: 0;
+            pointer-events: auto;
+        }
+
+        .activity-item {
+            padding: 3px 0;
+            border-bottom: 1px solid #444;
+            animation: slideIn 0.3s ease-out;
+            line-height: 1.2;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item .username {
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        .activity-item .action {
+            color: #ff6666;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         /* Contenedor de barra de vida */
@@ -133,52 +193,6 @@
             margin-top: 3px;
             text-align: center;
             font-weight: bold;
-        }
-
-        /* Historial de actividad */
-        .activity-log {
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #666;
-            border-radius: 8px;
-            padding: 6px;
-            max-height: 110px;
-            overflow-y: auto;
-            color: #fff;
-            font-size: 9px;
-            width: 130px;
-            flex-shrink: 0;
-            pointer-events: auto;
-        }
-
-        .activity-item {
-            padding: 3px 0;
-            border-bottom: 1px solid #444;
-            animation: slideIn 0.3s ease-out;
-            line-height: 1.2;
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-item .username {
-            color: #ffff00;
-            font-weight: bold;
-        }
-
-        .activity-item .action {
-            color: #ff6666;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
         }
 
         /* Confeti pequeño (likes) */
@@ -258,7 +272,7 @@
 
         /* Scrollbar personalizada */
         .activity-log::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
 
         .activity-log::-webkit-scrollbar-track {
@@ -286,23 +300,23 @@
             }
             
             .hp-label {
-                font-size: 12px;
+                font-size: 8px;
             }
             
             .hp-bar-container {
-                height: 30px;
+                height: 20px;
             }
             
             .hp-bar-fill {
-                font-size: 12px;
+                font-size: 7px;
             }
             
             .hp-text {
-                font-size: 12px;
+                font-size: 7px;
             }
             
             .activity-log {
-                font-size: 11px;
+                font-size: 8px;
                 max-height: 100px;
             }
         }
