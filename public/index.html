@@ -83,30 +83,32 @@
 
         /* Contenedor de barra de vida */
         .hp-container {
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid #ff4444;
-            border-radius: 8px;
-            padding: 12px;
-            width: 100%;
-            max-width: 95%;
-            margin: 0 auto;
-            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+            position: absolute;
+            bottom: 145px; /* Posicionado justo encima del historial de actividad */
+            right: 15px;
+            width: 170px; /* Ancho fijo pequeño para que no toque el centro (9:16) */
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #ff4444; /* Borde sutilmente más delgado */
+            border-radius: 6px;
+            padding: 8px;
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
+            margin: 0; /* Eliminamos el centrado automático anterior */
         }
 
         .hp-label {
             color: #fff;
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 11px; /* Texto más compacto */
+            margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .hp-bar-container {
             width: 100%;
-            height: 35px;
+            height: 22px; /* Más delgada y discreta */
             background: #333;
-            border: 2px solid #666;
-            border-radius: 5px;
+            border: 1px solid #666;
+            border-radius: 4px;
             overflow: hidden;
             position: relative;
         }
@@ -116,69 +118,47 @@
             background: linear-gradient(90deg, #00ff00, #ffff00, #ff6600, #ff0000);
             width: 100%;
             transition: width 0.1s ease-out;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding-right: 10px;
+            padding-right: 6px;
             color: #fff;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 10px; /* Porcentaje más pequeño */
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
 
         .hp-text {
             color: #fff;
-            font-size: 14px;
-            margin-top: 8px;
+            font-size: 11px; /* Números de vida más pequeños */
+            margin-top: 4px;
             text-align: center;
             font-weight: bold;
         }
 
-        /* Historial de actividad */
+        /* Historial de actividad (Pegado abajo a la derecha) */
         .activity-log {
-            background: rgba(0, 0, 0, 0.7);
+            position: absolute;
+            bottom: 15px; /* Margen inferior de la pantalla */
+            right: 15px; /* Margen derecho de la pantalla */
+            width: 170px; /* Mismo ancho que la barra de vida para simular un bloque */
+            background: rgba(0, 0, 0, 0.75);
             border: 2px solid #666;
-            border-radius: 8px;
-            padding: 12px;
-            max-height: 120px;
+            border-radius: 6px;
+            padding: 8px;
+            max-height: 110px; /* Altura máxima reducida para que no escale hacia arriba */
             overflow-y: auto;
             color: #fff;
-            font-size: 12px;
-            width: 100%;
-            max-width: 95%;
-            margin: 10px auto 0;
+            font-size: 10px; /* Letra más pequeña para conservar legibilidad en menos espacio */
+            margin: 0;
             pointer-events: auto;
         }
 
         .activity-item {
-            padding: 6px 0;
+            padding: 4px 0; /* Items más juntos para optimizar espacio */
             border-bottom: 1px solid #444;
             animation: slideIn 0.3s ease-out;
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-item .username {
-            color: #ffff00;
-            font-weight: bold;
-        }
-
-        .activity-item .action {
-            color: #ff6666;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
         }
 
         /* Confeti pequeño (likes) */
