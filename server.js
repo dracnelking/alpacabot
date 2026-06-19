@@ -84,6 +84,10 @@ function applyPassiveDamage() {
 
 // Función para manejar la derrota del jefe
 function handleBossDefeated() {
+  // 🛡️ CANDADO: Si el juego ya no está activo, ignoramos ejecuciones duplicadas
+  if (!gameState.isGameActive) return;
+  gameState.isGameActive = false; // Desactivar inmediatamente para bloquear más daño
+
   console.log(`¡¡¡ JEFE NIVEL ${gameState.currentLevel} DERROTADO !!!`);
   
   // Emitir evento de derrota
@@ -104,7 +108,9 @@ function handleBossDefeated() {
       gameState.vidaActual = nextBoss.maxHp;
       gameState.vidaMaxima = nextBoss.maxHp;
       gameState.currentBossVideo = nextBoss.video;
-      gameState.isGameActive = true;
+      
+      // 🛡️ REACTIVACIÓN: Volvemos a activar el juego solo cuando el nuevo jefe ya está listo
+      gameState.isGameActive = true; 
 
       console.log(`Iniciando Nivel ${gameState.currentLevel} - Boss HP: ${gameState.vidaMaxima}`);
 
@@ -120,7 +126,8 @@ function handleBossDefeated() {
     }, 3000); // 3 segundos después de la derrota
   } else {
     console.log('¡¡¡ TODOS LOS JEFES HAN SIDO DERROTADOS !!!');
-    gameState.isGameActive = false;
+    // Se queda en false permanentemente porque el juego terminó
+    gameState.isGameActive = false; 
     
     io.emit('game_completed', {
       message: '¡¡¡ JUEGO COMPLETADO !!!'
@@ -206,6 +213,9 @@ function connectToTikTok() {
 
   // Evento de regalos
   tiktokLive.on('gift', (data) => {
+    // 🛡️ Si el jefe está muriendo o el juego está pausado, ignoramos el golpe
+    if (!gameState.isGameActive) return; 
+
     console.log(`[GIFT] ${data.uniqueId} envió ${data.giftName} (cantidad: ${data.giftCount})`);
     
     // Si el regalo es una rosa, restar 50 HP
@@ -234,6 +244,9 @@ function connectToTikTok() {
 
   // Evento de likes/corazones
   tiktokLive.on('like', (data) => {
+    // 🛡️ Si el jefe está muriendo o el juego está pausado, ignoramos el like
+    if (!gameState.isGameActive) return;
+
     console.log(`[LIKE] ${data.uniqueId} envió un like`);
     
     // Restar 1 HP por like
